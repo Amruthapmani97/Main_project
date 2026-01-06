@@ -15,14 +15,12 @@ public class HomePage {
     WebDriverWait wait;
     JavascriptExecutor js;
 
-    // ---------- CONSTRUCTOR (Fixes ERROR) ----------
     public HomePage(WebDriver driver, WebDriverWait wait, JavascriptExecutor js) {
         this.driver = driver;
         this.wait = wait;
         this.js = js;
     }
 
-    // ---------- HELPER METHODS ----------
     private void scrollTo(WebElement el) {
         js.executeScript("arguments[0].scrollIntoView(true);", el);
     }
@@ -37,12 +35,10 @@ public class HomePage {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
 
-    // ========= PAGE LOAD =========
     public boolean isLogoDisplayed() {
         return waitVisible(By.cssSelector(".navbar-brand")).isDisplayed();
     }
 
-    // ========= NAVIGATION BAR =========
     public void clickHome() {
         click(By.xpath("//a[text()='Home ']"));
     }
@@ -89,7 +85,6 @@ public class HomePage {
         click(By.xpath("//a[text()='Home ']"));
     }
 
-    // ========= SLIDER =========
     public boolean clickNextButton() {
         click(By.cssSelector(".carousel-control-next"));
         return true;
@@ -100,7 +95,6 @@ public class HomePage {
         return true;
     }
 
-    // ========= CATEGORY SECTION =========
     public void selectCategory(String category) {
         click(By.linkText(category));
     }
@@ -109,7 +103,6 @@ public class HomePage {
         return driver.getPageSource().contains(category);
     }
 
-    // ========= PRODUCT CARD =========
     public boolean isProductCardDisplayed() {
 
         WebElement title = waitVisible(By.xpath("//div[@id='tbodyid']//a[@class='hrefch']"));
@@ -123,7 +116,6 @@ public class HomePage {
         click(By.xpath("//a[text()='Add to cart']"));
     }
 
-    // ========= SCROLL TO BOTTOM =========
     public void scrollToBottom() {
         js.executeScript("window.scrollTo(0, document.body.scrollHeight)");
     }

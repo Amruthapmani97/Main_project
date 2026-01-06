@@ -1,36 +1,64 @@
 package ModulePages;
 
+import java.time.Duration;
+import java.util.List;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class CategoriesPage {
 
-    private WebDriver driver;
-    private WebDriverWait wait;
-    private JavascriptExecutor js;
+    WebDriver driver;
+    WebDriverWait wait;
+    JavascriptExecutor js;
 
-    public CategoriesPage(WebDriver driver, WebDriverWait wait, JavascriptExecutor js) {
+    private By phoneCategory = By.linkText("Phones");
+    private By laptopCategory = By.linkText("Laptops");
+    private By productLinks = By.cssSelector("#tbodyid .card-title a");
+    private By homeMenu = By.id("nava");
+
+    public CategoriesPage(WebDriver driver) {
         this.driver = driver;
-        this.wait = wait;
-        this.js = js;
+        wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        js = (JavascriptExecutor) driver;
     }
 
-    private By categoryLink(String name) {
-        return By.linkText(name);
+    public void clickPhonesCategory() {
+        switchCategory(phoneCategory);
     }
 
-    private By productByIndex(int index) {
-        return By.xpath("(//div[@id='tbodyid']//a[@class='hrefch'])[" + index + "]");
+    public void clickLaptopsCategory() {
+        switchCategory(laptopCategory);
     }
 
-    public void selectCategory(String category) {
-        wait.until(ExpectedConditions.elementToBeClickable(categoryLink(category))).click();
+    private void switchCategory(By category) {
+
+        List<WebElement> oldProducts = driver.findElements(productLinks);
+        WebElement firstOldProduct = oldProducts.isEmpty() ? null : oldProducts.get(0);
+
+        WebElement cat = wait.until(ExpectedConditions.elementToBeClickable(category));
+        js.executeScript("arguments[0].click();", cat);
+
+        if (firstOldProduct != null) {
+            wait.until(ExpectedConditions.stalenessOf(firstOldProduct));
+        }
+
+        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(productLinks));
     }
 
-    public void openProduct(int index) {
-        wait.until(ExpectedConditions.elementToBeClickable(productByIndex(index))).click();
+    public void selectProductByIndex(int index) {
+        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(productLinks));
+        driver.findElements(productLinks).get(index).click();
+    }
+
+    public void goToHomePage() {
+        js.executeScript("arguments[0].click();",
+                wait.until(ExpectedConditions.elementToBeClickable(homeMenu)));
+        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(productLinks));
     }
 }
+
